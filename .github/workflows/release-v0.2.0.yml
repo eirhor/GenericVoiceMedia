@@ -1,0 +1,62 @@
+name: Release v0.2.0
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - staging/gvm-v0.2.0-media.zip
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    if: github.event.head_commit.message == 'Stage v0.2.0 media'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install media and update addon
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s staging/gvm-v0.2.0-media.zip
+          unzip -o staging/gvm-v0.2.0-media.zip -d .
+          rm staging/gvm-v0.2.0-media.zip
+          rmdir staging 2>/dev/null || true
+          test -s Media/Voice/Shaman/purge.ogg
+          for sound in ready available cooldown_ready soon now; do test -s "Media/Voice/${sound}.ogg"; done
+          for sound in astral-shift cleanse-spirit earth-elemental empowering-venom poison-cleansing-totem spiritwalkers-grace wind-rush-totem ascendance-ready stormkeeper-ready ancestral-swiftness-ready; do
+            test -s "Media/Voice/Shaman/${sound}.ogg"
+          done
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Release v0.2.0 voice refresh"
+          git push origin HEAD:master
+
+      - name: Build addon ZIP
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p dist/GenericVoiceMedia
+          rsync -a --exclude='.git' --exclude='.github' --exclude='dist' --exclude='staging' ./ dist/GenericVoiceMedia/
+          cd dist
+          zip -r GenericVoiceMedia-v0.2.0.zip GenericVoiceMedia
+
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          FINAL_SHA="$(git rev-parse HEAD)"
+          gh release create v0.2.0 \
+            dist/GenericVoiceMedia-v0.2.0.zip \
+            --target "$FINAL_SHA" \
+            --title "GenericVoiceMedia v0.2.0" \
+            --notes "Refreshes the generic and Shaman voice callouts with a higher-quality, louder voice mix. Adds GVM - Ascendance Ready, GVM - Stormkeeper Ready, and GVM - Ancestral Swiftness Ready. The existing Purge recording is intentionally preserved."
