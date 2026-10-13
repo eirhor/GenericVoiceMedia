@@ -1,0 +1,1 @@
+Temporary staging directory for v0.2.0 media import. This file will be removed by the release workflow.
