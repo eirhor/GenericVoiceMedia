@@ -16,6 +16,9 @@ local sounds = {
     { "Poison Cleansing Totem", "Shaman\\poison-cleansing-totem.ogg" },
     { "Purge", "Shaman\\purge.ogg" },
     { "Cleanse Spirit", "Shaman\\cleanse-spirit.ogg" },
+    { "Ascendance Ready", "Shaman\\ascendance-ready.ogg" },
+    { "Stormkeeper Ready", "Shaman\\stormkeeper-ready.ogg" },
+    { "Ancestral Swiftness Ready", "Shaman\\ancestral-swiftness-ready.ogg" },
 }
 
 for _, sound in ipairs(sounds) do
