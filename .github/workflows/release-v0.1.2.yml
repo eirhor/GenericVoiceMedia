@@ -1,0 +1,46 @@
+name: Release v0.1.2
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - .github/workflows/release-v0.1.2.yml
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Verify Shaman recordings
+        shell: bash
+        run: |
+          set -euo pipefail
+          for sound in astral-shift cleanse-spirit earth-elemental empowering-venom poison-cleansing-totem purge spiritwalkers-grace wind-rush-totem; do
+            test -s "Media/Voice/Shaman/${sound}.ogg"
+          done
+
+      - name: Build addon ZIP
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p dist/GenericVoiceMedia
+          rsync -a --exclude='.git' --exclude='.github' --exclude='dist' ./ dist/GenericVoiceMedia/
+          cd dist
+          zip -r GenericVoiceMedia-v0.1.2.zip GenericVoiceMedia
+
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          gh release create v0.1.2 \
+            dist/GenericVoiceMedia-v0.1.2.zip \
+            --target "${GITHUB_SHA}" \
+            --title "GenericVoiceMedia v0.1.2" \
+            --notes "Adds eight prerecorded Shaman ability callouts for LibSharedMedia: Astral Shift, Earth Elemental, Empowering Venom, Wind Rush Totem, Spiritwalker's Grace, Poison Cleansing Totem, Purge, and Cleanse Spirit. Existing generic voice sounds are preserved."
