@@ -26,13 +26,21 @@ jobs:
           set -euo pipefail
           test -s staging/gvm-v0.2.0-media.zip
           unzip -o staging/gvm-v0.2.0-media.zip -d .
-          rm staging/gvm-v0.2.0-media.zip
-          rmdir staging 2>/dev/null || true
-          test -s Media/Voice/Shaman/purge.ogg
+          rm -rf staging
+
+          # Keep the original Purge voice, but remaster it to the same louder alert target.
+          ffmpeg -hide_banner -loglevel error -y \
+            -i Media/Voice/Shaman/purge.ogg \
+            -af "silenceremove=start_periods=1:start_duration=0.01:start_threshold=-42dB:stop_periods=-1:stop_duration=0.04:stop_threshold=-42dB,acompressor=threshold=-18dB:ratio=2.5:attack=5:release=60:makeup=2,loudnorm=I=-11:TP=-1:LRA=5,apad=pad_dur=0.06" \
+            -ar 48000 -ac 1 -c:a libvorbis -q:a 5 \
+            Media/Voice/Shaman/purge-remastered.ogg
+          mv Media/Voice/Shaman/purge-remastered.ogg Media/Voice/Shaman/purge.ogg
+
           for sound in ready available cooldown_ready soon now; do test -s "Media/Voice/${sound}.ogg"; done
-          for sound in astral-shift cleanse-spirit earth-elemental empowering-venom poison-cleansing-totem spiritwalkers-grace wind-rush-totem ascendance-ready stormkeeper-ready ancestral-swiftness-ready; do
+          for sound in astral-shift cleanse-spirit earth-elemental empowering-venom poison-cleansing-totem purge spiritwalkers-grace wind-rush-totem ascendance-ready stormkeeper-ready ancestral-swiftness-ready; do
             test -s "Media/Voice/Shaman/${sound}.ogg"
           done
+
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A
@@ -59,4 +67,4 @@ jobs:
             dist/GenericVoiceMedia-v0.2.0.zip \
             --target "$FINAL_SHA" \
             --title "GenericVoiceMedia v0.2.0" \
-            --notes "Refreshes the generic and Shaman voice callouts with a higher-quality, louder voice mix. Adds GVM - Ascendance Ready, GVM - Stormkeeper Ready, and GVM - Ancestral Swiftness Ready. The existing Purge recording is intentionally preserved."
+            --notes "Refreshes the generic and Shaman voice callouts with a higher-quality, louder alert mix. Adds GVM - Ascendance Ready, GVM - Stormkeeper Ready, and GVM - Ancestral Swiftness Ready. Purge keeps its existing voice but is remastered to the same louder target."
