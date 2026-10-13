@@ -1,0 +1,1 @@
+Temporary note: manual upload bundle prepared outside the repository. This file can be deleted after the v0.2.0 media upload is complete.
