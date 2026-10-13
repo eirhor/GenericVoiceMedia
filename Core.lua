@@ -8,6 +8,8 @@ local sounds = {
     { "Cooldown Ready", "cooldown_ready.ogg" },
     { "Soon", "soon.ogg" },
     { "Now", "now.ogg" },
+    { "Bloodlust Ready", "bloodlust-ready.ogg" },
+    { "Potion Ready", "potion-ready.ogg" },
     { "Astral Shift", "Shaman\\astral-shift.ogg" },
     { "Earth Elemental", "Shaman\\earth-elemental.ogg" },
     { "Empowering Venom", "Shaman\\empowering-venom.ogg" },
