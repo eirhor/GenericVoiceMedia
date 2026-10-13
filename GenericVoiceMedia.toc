@@ -1,7 +1,7 @@
 ## Interface: 120000, 120001, 120005, 120007, 120100, 16001
 ## Title: Generic Voice Media
 ## Notes: Prerecorded voice sounds for LibSharedMedia-compatible addons
-## Version: 0.1.0
+## Version: 0.1.2
 Libs\LibStub\LibStub.lua
 Libs\CallbackHandler-1.0\CallbackHandler-1.0.lua
 Libs\LibSharedMedia-3.0\LibSharedMedia-3.0.lua
