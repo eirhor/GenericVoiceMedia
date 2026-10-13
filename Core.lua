@@ -10,6 +10,7 @@ local sounds = {
     { "Now", "now.ogg" },
     { "Bloodlust Ready", "bloodlust-ready.ogg" },
     { "Potion Ready", "potion-ready.ogg" },
+    { "Stoneform", "stoneform.ogg" },
     { "Astral Shift", "Shaman\\astral-shift.ogg" },
     { "Earth Elemental", "Shaman\\earth-elemental.ogg" },
     { "Empowering Venom", "Shaman\\empowering-venom.ogg" },
@@ -21,6 +22,11 @@ local sounds = {
     { "Ascendance Ready", "Shaman\\ascendance-ready.ogg" },
     { "Stormkeeper Ready", "Shaman\\stormkeeper-ready.ogg" },
     { "Ancestral Swiftness Ready", "Shaman\\ancestral-swiftness-ready.ogg" },
+    { "AMS", "DeathKnight\\ams.ogg" },
+    { "AMZ", "DeathKnight\\amz.ogg" },
+    { "IBF", "DeathKnight\\ibf.ogg" },
+    { "Death's Advance", "DeathKnight\\deaths-advance.ogg" },
+    { "Death Charge", "DeathKnight\\death-charge.ogg" },
 }
 
 for _, sound in ipairs(sounds) do
