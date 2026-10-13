@@ -8,6 +8,14 @@ local sounds = {
     { "Cooldown Ready", "cooldown_ready.ogg" },
     { "Soon", "soon.ogg" },
     { "Now", "now.ogg" },
+    { "Astral Shift", "Shaman\\astral-shift.ogg" },
+    { "Earth Elemental", "Shaman\\earth-elemental.ogg" },
+    { "Empowering Venom", "Shaman\\empowering-venom.ogg" },
+    { "Wind Rush Totem", "Shaman\\wind-rush-totem.ogg" },
+    { "Spiritwalker's Grace", "Shaman\\spiritwalkers-grace.ogg" },
+    { "Poison Cleansing Totem", "Shaman\\poison-cleansing-totem.ogg" },
+    { "Purge", "Shaman\\purge.ogg" },
+    { "Cleanse Spirit", "Shaman\\cleanse-spirit.ogg" },
 }
 
 for _, sound in ipairs(sounds) do
