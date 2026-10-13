@@ -1,0 +1,51 @@
+name: Release v0.2.0
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - .github/workflows/release-v0.2.0.yml
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Verify media
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s Media/Voice/ready.ogg
+          test -s Media/Voice/available.ogg
+          test -s Media/Voice/cooldown_ready.ogg
+          test -s Media/Voice/soon.ogg
+          test -s Media/Voice/now.ogg
+          for sound in astral-shift cleanse-spirit earth-elemental empowering-venom poison-cleansing-totem purge spiritwalkers-grace wind-rush-totem ascendance-ready stormkeeper-ready ancestral-swiftness-ready; do
+            test -s "Media/Voice/Shaman/${sound}.ogg"
+          done
+
+      - name: Build addon ZIP
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p dist/GenericVoiceMedia
+          rsync -a --exclude='.git' --exclude='.github' --exclude='dist' ./ dist/GenericVoiceMedia/
+          cd dist
+          zip -r GenericVoiceMedia-v0.2.0.zip GenericVoiceMedia
+
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          gh release create v0.2.0 \
+            dist/GenericVoiceMedia-v0.2.0.zip \
+            --target "${GITHUB_SHA}" \
+            --title "GenericVoiceMedia v0.2.0" \
+            --notes "Refreshes the generic and Shaman voice callouts with a higher-quality, louder alert mix. Adds GVM - Ascendance Ready, GVM - Stormkeeper Ready, and GVM - Ancestral Swiftness Ready."
