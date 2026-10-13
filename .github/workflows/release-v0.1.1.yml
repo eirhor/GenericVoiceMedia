@@ -1,0 +1,75 @@
+name: Release v0.1.1
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - .github/workflows/release-v0.1.1.yml
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Regenerate cooldown ready audio
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y espeak ffmpeg zip
+          mkdir -p Media/Voice
+          espeak -v en-us -s 175 -p 50 -a 160 -w /tmp/cooldown_ready.wav "Cooldown ready"
+          ffmpeg -y -hide_banner -loglevel error \
+            -i /tmp/cooldown_ready.wav \
+            -af "silenceremove=start_periods=1:start_threshold=-50dB:stop_periods=-1:stop_threshold=-50dB,loudnorm=I=-16:TP=-1.5:LRA=11" \
+            -ar 48000 -ac 1 -c:a libvorbis -q:a 4 \
+            Media/Voice/cooldown_ready.ogg
+          ffprobe -v error -show_entries format=duration:stream=codec_name,sample_rate,channels \
+            -of default=noprint_wrappers=1 Media/Voice/cooldown_ready.ogg
+
+      - name: Commit corrected audio
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add Media/Voice/cooldown_ready.ogg
+          if git diff --cached --quiet; then
+            echo "Audio file is already up to date"
+          else
+            git commit -m "Fix Cooldown Ready audio"
+            git push origin HEAD:master
+          fi
+
+      - name: Build addon ZIP
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf dist
+          mkdir -p dist/GenericVoiceMedia
+          rsync -a \
+            --exclude='.git' \
+            --exclude='.github' \
+            --exclude='dist' \
+            ./ dist/GenericVoiceMedia/
+          cd dist
+          zip -r GenericVoiceMedia-v0.1.1.zip GenericVoiceMedia
+
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          gh release create v0.1.1 \
+            dist/GenericVoiceMedia-v0.1.1.zip \
+            --target master \
+            --title "GenericVoiceMedia v0.1.1" \
+            --notes "Fixes the Cooldown Ready sound asset so it plays correctly in-game."
