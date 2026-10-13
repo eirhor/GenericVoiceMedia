@@ -1,6 +1,6 @@
 # Generic Voice Media
 
-Standalone LibSharedMedia sound pack for World of Warcraft. No dependency on EllesmereUI.
+Standalone LibSharedMedia sound pack for World of Warcraft. To add some pre-recorded text-to-speech messages for cooldowns etc.
 
 ## Installation
 Place `GenericVoiceMedia` in `World of Warcraft/_retail_/Interface/AddOns/`.
